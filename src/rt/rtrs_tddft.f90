@@ -15,33 +15,24 @@
 !    You should have received a copy of the GNU General Public License
 !    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 !-------------------------------------------------------------------------------
-program main
+module rtrs_tddft
   use global_variables
   use parallel
   use communication
-  use input
-  use rs_dft
-  use rtrs_tddft
   implicit none
-  integer :: i
 
-  call init_parallel
-  call init_input
-  call read_basic_input('calc_mode',calc_mode,'none')
+  private
 
-  select case(calc_mode)
-  case('gs')
-    call gs_rs_dft
-  case('rt')
-    call tdrun_rtrs_tddft
-  case default
-  end select
+  public :: tdrun_rtrs_tddft
 
-  write(*,*)"calc_mode",comm_id_global,trim(calc_mode)
-  write(*,*)"nl",comm_id_global,nl
-  write(*,*)"nt",comm_id_global,nt
-  write(*,*)"dt",comm_id_global,dt
+contains
+!-------------------------------------------------------------------------------
+  subroutine tdrun_rtrs_tddft
+    implicit none
 
-  call fin_parallel
+!    call gs_rs_dft
 
-end program main
+  end subroutine tdrun_rtrs_tddft
+
+!-------------------------------------------------------------------------------
+end module rtrs_tddft
