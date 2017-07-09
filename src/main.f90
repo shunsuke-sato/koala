@@ -17,9 +17,24 @@
 !-------------------------------------------------------------------------------
 program main
   use parallel
+  use communication
   implicit none
-
+  integer :: i
   call init_parallel
-  write(*,*)myrank_global
+
+  write(*,*)"myrank",comm_id_global
+  i = comm_id_global
+  call comm_bcast(i)
+  write(*,*)"i",i
+
+  i = comm_id_global
+  call comm_bcast(i,communicator=comm_group_global)
+  write(*,*)"i-comm,0",i
+
+  i = comm_id_global
+  call comm_bcast(i,root=1)
+  write(*,*)"i-root,1",i
+
+  call fin_parallel
 
 end program main

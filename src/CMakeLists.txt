@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 project(KOALA Fortran)
 
 
-set(CMAKE_Fortran_COMPILER      "mpiifort")
-set(CMAKE_Fortran_FLAGS   "-O2 -qopenmp")
+set(CMAKE_Fortran_COMPILER      "mpif90")
+set(CMAKE_Fortran_FLAGS   "-O0")
 
 set (LIBRARY_OUTPUT_PATH           ${PROJECT_BINARY_DIR})
 set(CMAKE_Fortran_MODULE_DIRECTORY ${PROJECT_BINARY_DIR})
