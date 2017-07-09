@@ -25,27 +25,27 @@ module global_variables
 
 ! real-space
   integer :: nl(3)
-  real(8) :: a_Cvec(3,3),a_Cvec_d(3,3),b_Cvec(3,3)
+  real(8) :: al(3),a_pre_Cvec(3,3),a_Cvec(3,3)
+  real(8) :: a_Cvec_d(3,3),b_Cvec(3,3)
   real(8) :: norm_a_Cvec(3),norm_b_Cvec(3)
   real(8) :: mat_vv_a_Cvec(3,3)  
   real(8) :: A_matrix(3,3),B_matrix(3,3),B_t_matrix(3,3)
-  real(8) :: aL,aL1,aL2,aL3
   real(8) :: H1,H2,H3,H123,Vcell
 
-! reciprocal-lattice space
-  integer :: NK1,NK2,NK3,NK
+! reciprocal-lattice spacew
+  integer :: nk(3), nk_s, nk_e
   real(8),allocatable :: kAc_Rvec(:,:),kAc0_Rvec(:,:)
   real(8),allocatable :: kAc_Cvec(:,:),kAc0_Cvec(:,:)
+
+! material
+  integer :: num_ion, num_element, num_elec
+  integer,allocatable :: Zatom(:),Kion(:)
+  real(8),allocatable :: Rion_Cvec(:,:),Rion_reduced(:,:)
+  real(8),allocatable :: occ(:,:)
 
 ! wave function
   integer :: Num_Band,Num_Band_TD
   complex(8),allocatable :: zu(:,:,:,:),zu_GS(:,:,:,:),zu_GS0(:,:,:,:)
-
-! material
-  integer :: NI,NE,Nelec
-  integer,allocatable :: Zatom(:),Kion(:)
-  real(8),allocatable :: Rion_Cvec(:,:),Rion_reduced(:,:)
-  real(8),allocatable :: occ(:,:)
 
 ! GS parameter
   integer :: Ncg,Nscf

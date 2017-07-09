@@ -27,7 +27,8 @@ module input
 
   public :: init_input, &
             read_basic_input, &
-            read_vector_input
+            read_vector_input, &
+            read_matrix_input
 !            read_calc_mode
 
   interface read_basic_input
@@ -40,6 +41,11 @@ module input
      module procedure read_vector_input_integer
      module procedure read_vector_input_real8
   end interface read_vector_input
+
+  interface read_matrix_input
+     module procedure read_matrix_input_integer
+     module procedure read_matrix_input_real8
+  end interface
 
 contains
 !-------------------------------------------------------------------------------
@@ -56,14 +62,14 @@ contains
     implicit none
     character(*),intent(in) :: name
     character(*),intent(out) :: val
-    character(*),intent(in) :: val_default
+    character(*),intent(in),optional :: val_default
     logical,intent(out),optional :: if_default
     character(len_max) :: val_t
     logical :: if_found
     integer :: index_equal, length_trimed
     
     if(if_root_global)then
-      val = trim(val_default)
+      if(present(val_default))val = val_default
       call lookup_input(name, if_found, val_t)
       if(if_found)then
         index_equal= index(val_t,'=')
@@ -84,14 +90,14 @@ contains
     implicit none
     character(*),intent(in) :: name
     integer,intent(out) :: val
-    integer,intent(in) :: val_default
+    integer,intent(in),optional :: val_default
     logical,intent(out),optional :: if_default
     character(len_max) :: val_t
     logical :: if_found
     integer :: index_equal, length_trimed
     
     if(if_root_global)then
-      val = val_default
+      if(present(val_default))val = val_default
       call lookup_input(name, if_found, val_t)
       if(if_found)then
         index_equal= index(val_t,'=')
@@ -113,14 +119,14 @@ contains
     implicit none
     character(*),intent(in) :: name
     real(8),intent(out) :: val
-    real(8),intent(in) :: val_default
+    real(8),intent(in),optional :: val_default
     logical,intent(out),optional :: if_default
     character(len_max) :: val_t
     logical :: if_found
     integer :: index_equal, length_trimed
     
     if(if_root_global)then
-      val = val_default
+      if(present(val_default))val = val_default
       call lookup_input(name, if_found, val_t)
       if(if_found)then
         index_equal= index(val_t,'=')
@@ -142,14 +148,14 @@ contains
     implicit none
     character(*),intent(in) :: name
     integer,intent(out) :: val(:)
-    integer,intent(in) :: val_default(:)
+    integer,intent(in),optional :: val_default(:)
     logical,intent(out),optional :: if_default
     character(len_max) :: val_t
     logical :: if_found
     integer :: index_equal, length_trimed
     
     if(if_root_global)then
-      val = val_default
+      if(present(val_default))val = val_default
       call lookup_input(name, if_found)
       if(if_found)then
         read(id_inputfile, *) val(:)
@@ -168,14 +174,14 @@ contains
     implicit none
     character(*),intent(in) :: name
     real(8),intent(out) :: val(:)
-    real(8),intent(in) :: val_default(:)
+    real(8),intent(in),optional :: val_default(:)
     logical,intent(out),optional :: if_default
     character(len_max) :: val_t
     logical :: if_found
     integer :: index_equal, length_trimed
     
     if(if_root_global)then
-      val = val_default
+      if(present(val_default))val = val_default
       call lookup_input(name, if_found)
       if(if_found)then
         read(id_inputfile, *) val(:)
@@ -189,6 +195,68 @@ contains
     end if
 
   end subroutine read_vector_input_real8
+!-------------------------------------------------------------------------------
+  subroutine read_matrix_input_integer(name, val, val_default, if_default)
+    implicit none
+    character(*),intent(in) :: name
+    integer,intent(out) :: val(:,:)
+    integer,intent(in),optional :: val_default(:,:)
+    logical,intent(out),optional :: if_default
+    character(len_max) :: val_t
+    logical :: if_found
+    integer :: index_equal, length_trimed
+    integer :: i_lbound, i_ubound, i
+    
+    if(if_root_global)then
+      i_lbound = lbound(val,1); i_ubound = ubound(val,1)
+
+      if(present(val_default))val = val_default
+      call lookup_input(name, if_found)
+      if(if_found)then
+        do i = i_lbound, i_ubound
+          read(id_inputfile, *) val(i,:)
+        end do
+      end if
+    end if
+    call comm_bcast(val)
+
+    if(present(if_default))then
+      if_default = .not.if_found
+      call comm_bcast(if_default)
+    end if
+
+  end subroutine read_matrix_input_integer
+!-------------------------------------------------------------------------------
+  subroutine read_matrix_input_real8(name, val, val_default, if_default)
+    implicit none
+    character(*),intent(in) :: name
+    real(8),intent(out) :: val(:,:)
+    real(8),intent(in),optional :: val_default(:,:)
+    logical,intent(out),optional :: if_default
+    character(len_max) :: val_t
+    logical :: if_found
+    integer :: index_equal, length_trimed
+    integer :: i_lbound, i_ubound, i
+    
+    if(if_root_global)then
+      i_lbound = lbound(val,1); i_ubound = ubound(val,1)
+
+      if(present(val_default))val = val_default
+      call lookup_input(name, if_found)
+      if(if_found)then
+        do i = i_lbound, i_ubound
+          read(id_inputfile, *) val(i,:)
+        end do
+      end if
+    end if
+    call comm_bcast(val)
+
+    if(present(if_default))then
+      if_default = .not.if_found
+      call comm_bcast(if_default)
+    end if
+
+  end subroutine read_matrix_input_real8
 
 !-------------------------------------------------------------------------------
   subroutine lookup_input(char_in, if_found, char_out)

@@ -19,7 +19,7 @@ module rs_dft
   use global_variables
   use parallel
   use communication
-  use gs_rt_input
+  use read_gs_rt_input
   implicit none
 
 !  private
