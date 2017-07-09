@@ -15,33 +15,14 @@
 !    You should have received a copy of the GNU General Public License
 !    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 !-------------------------------------------------------------------------------
-program main
-  use global_variables
-  use parallel
-  use communication
-  use input
+module constants
   implicit none
-  integer :: i
 
-  call init_parallel
-  call init_input
-  call read_basic_input('calc_mode',calc_mode,'none')
+! mathematical constants
+  real(8),parameter :: pi = 3.141592653589793d0
+  complex(8),parameter :: zI=(0.d0,1.d0)
 
-  write(*,*)"calc_mode",comm_id_global,trim(calc_mode)
+! physical constants
 
-  write(*,*)"myrank",comm_id_global
-  i = comm_id_global
-  call comm_bcast(i)
-  write(*,*)"i",i
 
-  i = comm_id_global
-  call comm_bcast(i,communicator=comm_group_global)
-  write(*,*)"i-comm,0",i
-
-  i = comm_id_global
-  call comm_bcast(i,root=1)
-  write(*,*)"i-root,1",i
-
-  call fin_parallel
-
-end program main
+end module constants
