@@ -29,7 +29,9 @@ module parallel
 ! OMP
   integer, public :: nthread_omp
 
-  public :: init_parallel, fin_parallel
+  public :: init_parallel, &
+            fin_parallel,  &
+            error_finalize
 
 contains
 !-------------------------------------------------------------------------------
@@ -62,5 +64,16 @@ contains
     call MPI_Finalize(ierr)
 
   end subroutine fin_parallel
+!-------------------------------------------------------------------------------
+  subroutine error_finalize(message)
+    implicit none
+    character(*),intent(in) :: message
+    integer :: ierr
+
+    if(if_root_global)write(*,"(A)")message
+    call MPI_Finalize(ierr)
+    stop
+
+  end subroutine error_finalize
 !-------------------------------------------------------------------------------
 end module parallel
