@@ -1,4 +1,6 @@
 calc_mode = gs
+ntt = 500
+dtd = 0.08d0
 
 %lattice_parameter
 10.26  10.26  10.26

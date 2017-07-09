@@ -26,8 +26,12 @@ program main
   call init_parallel
   call init_input
   call read_basic_input('calc_mode',calc_mode,'none')
+  call read_basic_input('nt',Nt,0)
+  call read_basic_input('dt',dt,0.0d0)
 
   write(*,*)"calc_mode",comm_id_global,trim(calc_mode)
+  write(*,*)"nt",comm_id_global,nt
+  write(*,*)"dt",comm_id_global,dt
 
   write(*,*)"myrank",comm_id_global
   i = comm_id_global
