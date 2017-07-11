@@ -47,33 +47,18 @@ module communication
 
 contains
 !-------------------------------------------------------------------------------
-  function communicator_check(if_present, communicator) result(id_comm)
+  function int_switch(if_true, int_true, int_false) result(int_result)
     implicit none
-    logical,intent(in) :: if_present
-    integer,intent(in) :: communicator
-    integer :: id_comm
+    logical,intent(in) :: if_true
+    integer,intent(in) :: int_true, int_false
+    integer :: int_result
 
-    if(.not.if_present)then
-      id_comm = comm_group_global
+    if(if_true)then
+      int_result = int_true
     else
-      id_comm = communicator
-    end if
-
-  end function communicator_check
-!-------------------------------------------------------------------------------
-  function root_check(if_present, root) result(id_root)
-    implicit none
-    logical,intent(in) :: if_present
-    integer,intent(in) :: root
-    integer :: id_root
-
-    if(.not.if_present)then
-      id_root = 0
-    else
-      id_root = root
-    end if
-
-  end function root_check
+      int_result = int_false
+   end if
+  end function int_switch
 !-------------------------------------------------------------------------------
   include "include/comm_bcast.f90"
 !-------------------------------------------------------------------------------
