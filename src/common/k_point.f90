@@ -15,29 +15,49 @@
 !    You should have received a copy of the GNU General Public License
 !    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 !-------------------------------------------------------------------------------
-module rs_dft
+module k_point
   use global_variables
   use parallel
-  use communication
-  use read_gs_rt_input
-  use simulation_box
-  use k_point
   implicit none
 
-!  private
-
-  public :: gs_rs_dft
+  private
+  public :: init_k_grid_3d
 
 contains
 !-------------------------------------------------------------------------------
-  subroutine gs_rs_dft
+  subroutine init_k_grid_3d
     implicit none
+    integer :: i,i1,i2,i3
 
-    call read_common_input_for_rtrs_tddft
-    call init_simul_box
-    call init_k_grid_3d
+    if(if_root_global)then
+       write(*,"(A)")"Start: Initialize k-point grids."
+    end if
 
-  end subroutine gs_rs_dft
+    nk_tot = nk(1)*nk(2)*nk(3)
+    dk(:) = 1d0/dble(nk(:))
 
+    allocate(kac_rvec(3,nk_tot), kac0_rvec(3,nk_tot))
+    allocate(kac_Cvec(3,nk_tot), kac0_cvec(3,nk_tot))
+
+
+    i=0
+    do i1=0,nk(1)-1
+       do i2=0,nk(2)-1
+          do i3=0,nk(3)-1
+             i=i+1
+             kac0_rvec(1,i)=dble(i1)*dk(1)-dk(1)*(dble(nk(1)/2)-0.5d0)
+             kac0_rvec(2,i)=dble(i2)*dk(2)-dk(2)*(dble(nk(2)/2)-0.5d0)
+             kac0_rvec(3,i)=dble(i3)*dk(3)-dk(3)*(dble(nk(3)/2)-0.5d0)
+          end do
+       end do
+    end do
+    
+    kac0_cvec = matmul(b_cvec,kac0_rvec)
+
+    if(if_root_global)then
+       write(*,"(A)")"End: Initialize k-point grids."
+    end if
+
+  end subroutine init_k_grid_3d
 !-------------------------------------------------------------------------------
-end module rs_dft
+end module k_point

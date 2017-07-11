@@ -37,11 +37,11 @@ module global_variables
 
 
 ! reciprocal-lattice spacew
-  integer :: nk(3), nk_s, nk_e
-  real(8) :: dk
+  integer :: nk(3), nk_tot, nk_s, nk_e
+  real(8) :: dk(3)
 
-  real(8),allocatable :: kAc_Rvec(:,:),kAc0_Rvec(:,:)
-  real(8),allocatable :: kAc_Cvec(:,:),kAc0_Cvec(:,:)
+  real(8),allocatable :: kac_rvec(:,:),kac0_rvec(:,:)
+  real(8),allocatable :: kac_cvec(:,:),kac0_cvec(:,:)
 
 ! material
   integer :: num_ion, num_element, num_elec
