@@ -24,16 +24,22 @@ module global_variables
   character(256) :: calc_mode
 
 ! real-space
-  integer :: nl(3)
-  real(8) :: al(3),a_pre_Cvec(3,3),a_Cvec(3,3)
-  real(8) :: a_Cvec_d(3,3),b_Cvec(3,3)
-  real(8) :: norm_a_Cvec(3),norm_b_Cvec(3)
-  real(8) :: mat_vv_a_Cvec(3,3)  
-  real(8) :: A_matrix(3,3),B_matrix(3,3),B_t_matrix(3,3)
-  real(8) :: H1,H2,H3,H123,Vcell
+  integer :: nl(3), nl_tot
+  real(8) :: al(3), hl(3)
+  real(8) :: a_pre_cvec(3,3),a_cvec(3,3), b_Cvec(3,3)
+  real(8) :: vcell, dvcell
+  integer,allocatable :: ilx(:,:),ilx123(:,:,:)
+  real(8),allocatable :: lx(:,:)
+
+!  real(8) :: norm_a_Cvec(3),norm_b_Cvec(3)
+!  real(8) :: mat_vv_a_Cvec(3,3)  
+!  real(8) :: A_matrix(3,3),B_matrix(3,3),B_t_matrix(3,3)
+
 
 ! reciprocal-lattice spacew
   integer :: nk(3), nk_s, nk_e
+  real(8) :: dk
+
   real(8),allocatable :: kAc_Rvec(:,:),kAc0_Rvec(:,:)
   real(8),allocatable :: kAc_Cvec(:,:),kAc0_Cvec(:,:)
 

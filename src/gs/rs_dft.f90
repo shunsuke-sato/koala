@@ -20,6 +20,7 @@ module rs_dft
   use parallel
   use communication
   use read_gs_rt_input
+  use simulation_box
   implicit none
 
 !  private
@@ -32,6 +33,7 @@ contains
     implicit none
 
     call read_common_input_for_rtrs_tddft
+    call init_simul_box
 
   end subroutine gs_rs_dft
 
