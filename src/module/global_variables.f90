@@ -48,6 +48,8 @@ module global_variables
   integer :: num_band, num_band_td
   integer :: num_orb, num_orb_td
   integer,allocatable :: Zatom(:),Kion(:)
+  integer,allocatable :: lloc_ps(:),lmax_ps(:)
+  character(16),allocatable :: name_species(:)
   real(8),allocatable :: Rion_Cvec(:,:),Rion_reduced(:,:)
   real(8),allocatable :: occ(:,:)
   integer,allocatable :: list_kpoint(:), list_band(:), list_orb2(:,:)

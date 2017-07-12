@@ -23,6 +23,7 @@ module rs_dft
   use simulation_box
   use k_point
   use orbital
+  use atom
   implicit none
 
 !  private
@@ -35,6 +36,7 @@ contains
     implicit none
 
     call read_common_input_for_rtrs_tddft
+    call read_species
     call init_simul_box
     call init_k_grid_3d
     call init_orbital
