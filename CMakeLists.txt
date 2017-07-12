@@ -5,6 +5,8 @@ project(KOALA Fortran)
 set(CMAKE_Fortran_COMPILER      "mpif90")
 set(CMAKE_Fortran_FLAGS   "-O0 ")
 
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR})
+
 set(TARGET_NAME   "koala")
 set(MOD_LIB        module)
 set(IO_LIB         io)
@@ -12,12 +14,12 @@ set(COMMON_LIB     common)
 set(GS_LIB         gs)
 set(RT_LIB         rt)
 
-set(KOALA_SOURCES   main.f90)
-file(GLOB MOD_SRC ${MOD_LIB}/*.f90)
-file(GLOB IO_SRC ${IO_LIB}/*.f90)
-file(GLOB COMMON_SRC ${COMMON_LIB}/*.f90)
-file(GLOB GS_SRC ${GS_LIB}/*.f90)
-file(GLOB RT_SRC ${RT_LIB}/*.f90)
+set(KOALA_SOURCES   src/main.f90)
+file(GLOB MOD_SRC src/${MOD_LIB}/*.f90)
+file(GLOB IO_SRC src/${IO_LIB}/*.f90)
+file(GLOB COMMON_SRC src/${COMMON_LIB}/*.f90)
+file(GLOB GS_SRC src/${GS_LIB}/*.f90)
+file(GLOB RT_SRC src/${RT_LIB}/*.f90)
 list(APPEND KOALA_SOURCES 
             ${MOD_SRC}
             ${IO_SRC}
