@@ -15,46 +15,43 @@
 !    You should have received a copy of the GNU General Public License
 !    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 !-------------------------------------------------------------------------------
-module rs_dft
+module orbital
   use global_variables
-  use parallel
-  use communication
-  use read_gs_rt_input
-  use simulation_box
-  use k_point
-  use orbital
   implicit none
 
-!  private
-
-  public :: gs_rs_dft
+  private
+  public :: init_orbital, &
+             init_occupation
 
 contains
 !-------------------------------------------------------------------------------
-  subroutine gs_rs_dft
+  subroutine init_orbital
+    implicit none
+    integer :: iorb, ik, ib
+
+    num_orb = nk_tot * num_band
+    allocate(list_kpoint(num_orb), list_band(num_orb))
+    allocate(list_orb2(num_band, nk_tot))
+
+    iorb = 0
+    do ik = 1, nk_tot
+      do ib = 1, num_band
+        iorb = iorb + 1
+        list_kpoint(iorb) = ik
+        list_band(iorb) = ib
+        list_orb2(ib,ik) = iorb
+      end do
+    end do
+
+  end subroutine init_orbital
+!-------------------------------------------------------------------------------
+  subroutine init_occupation
     implicit none
 
-    call read_common_input_for_rtrs_tddft
-    call init_simul_box
-    call init_k_grid_3d
-    call init_orbital
-    call init_occupation
+    allocate(occ(num_band,nk_tot))
+    occ = 0d0
+    occ(1:num_elec/2, nk_tot) = 2d0/dble(nk_tot)
 
-    call init_gs_array
-
-
-  end subroutine gs_rs_dft
+  end subroutine init_occupation
 !-------------------------------------------------------------------------------
-  subroutine init_gs_array
-    implicit none
-
-    allocate(zwfn_gs(0:nl(1)-1, 0:nl(2)-1, 0:nl(3)-1, num_orb))
-    allocate(zwfn_gs0(0:nl(1)-1, 0:nl(2)-1, 0:nl(3)-1, num_orb))
-    allocate(rho(0:nl(1)-1, 0:nl(2)-1, 0:nl(3)-1))
-    allocate(vloc(0:nl(1)-1, 0:nl(2)-1, 0:nl(3)-1))
-    allocate(vh(0:nl(1)-1, 0:nl(2)-1, 0:nl(3)-1))
-    allocate(vxc(0:nl(1)-1, 0:nl(2)-1, 0:nl(3)-1))
-
-  end subroutine init_gs_array
-!-------------------------------------------------------------------------------
-end module rs_dft
+end module orbital

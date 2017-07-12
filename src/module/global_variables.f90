@@ -45,19 +45,22 @@ module global_variables
 
 ! material
   integer :: num_ion, num_element, num_elec
+  integer :: num_band, num_band_td
+  integer :: num_orb, num_orb_td
   integer,allocatable :: Zatom(:),Kion(:)
   real(8),allocatable :: Rion_Cvec(:,:),Rion_reduced(:,:)
   real(8),allocatable :: occ(:,:)
+  integer,allocatable :: list_kpoint(:), list_band(:), list_orb2(:,:)
 
-! wave function
-  integer :: Num_Band,Num_Band_TD
-  complex(8),allocatable :: zu(:,:,:,:),zu_GS(:,:,:,:),zu_GS0(:,:,:,:)
+! Kohn-Sham
+  complex(8),allocatable :: zwfn(:,:,:,:),zwfn_gs(:,:,:,:),zwfn_gs0(:,:,:,:)
+  real(8),allocatable :: rho(:,:,:), vloc(:,:,:), vh(:,:,:), vxc(:,:,:)
 
 ! GS parameter
-  integer :: Ncg,Nscf
+  integer :: ncg, nscf
 
 ! RT parameter
-  integer :: Nt
+  integer :: nt
   real(8) :: dt
 
 
