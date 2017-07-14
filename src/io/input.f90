@@ -24,11 +24,14 @@ module input
 
   private
   integer,parameter :: len_max = 256
+  integer,parameter :: max_species = 20
 
   public :: init_input, &
             read_basic_input, &
             read_vector_input, &
-            read_matrix_input
+            read_matrix_input, &
+            read_common_input, &
+            read_species
 !            read_calc_mode
 
   interface read_basic_input
@@ -57,6 +60,112 @@ contains
     end if
 
   end subroutine init_input
+!-------------------------------------------------------------------------------
+  subroutine read_common_input
+    implicit none
+
+    logical :: if_default
+
+! real-space
+    call read_vector_input('%num_rs_grid',nl,val_default=(/-1,-1,-1/))
+
+    call read_vector_input('%lattice_parameter',al,val_default=(/1d0,1d0,1d0/))
+    call read_matrix_input('%lattice_vector_pre',a_pre_cvec, &
+         val_default = reshape( (/1d0,0d0,0d0,0d0,1d0,0d0,0d0,0d0,1d0/), (/3,3/)) )
+    a_pre_cvec = transpose(a_pre_cvec)
+    a_cvec(:,1) = al(1)*a_pre_cvec(:,1)
+    a_cvec(:,2) = al(2)*a_pre_cvec(:,2)
+    a_cvec(:,3) = al(3)*a_pre_cvec(:,3)
+
+! reciprocal-lattice spacew
+    call read_vector_input('%num_k_grid',nk,val_default=(/-1,-1,-1/))
+
+! material
+    call read_basic_input('num_elec',num_elec,if_default=if_default)
+    if(if_default)call error_finalize('Error: num_elec should be specified in input.')
+
+    call read_basic_input('num_band',num_band,val_default=num_elec)
+
+
+    call read_basic_input('nt',Nt,val_default=0)
+    call read_basic_input('dt',dt,val_default=0.0d0)
+
+
+  end subroutine read_common_input
+!-------------------------------------------------------------------------------
+  subroutine read_species
+    implicit none
+    logical :: if_found, if_error
+    character(256) :: char_t
+    integer :: inum,istat,ielem,illoc
+
+    if(if_root_global)then
+      rewind(id_inputfile)
+      if_found = .false.
+      if_error = .false.
+
+      do
+        read(id_inputfile, '(a)', iostat=istat) char_t
+        if(istat < 0)exit
+        if(trim(adjustl(char_t)) == '%species')then
+          if_found = .true.
+          exit
+        end if
+      end do
+
+      inum = 0
+      do 
+        read(id_inputfile, '(a)', iostat=istat) char_t
+        if(istat < 0)then
+           if_error = .true.
+           exit
+        end if
+        if(trim(adjustl(char_t)) == '/')then
+          exit
+        else
+          inum = inum + 1
+        end if
+      end do
+      num_element = inum
+
+    end if
+
+    call comm_bcast(num_element)
+    if(num_element == 0)call error_finalize("Error: %species should be specified in input.")
+    call comm_bcast(if_found)
+    if(.not.if_found)call error_finalize("Error: %species should be specified in input.")
+    call comm_bcast(if_error)
+    if(if_error)call error_finalize("Error: %species should be closed by slash (/).")
+
+    allocate(lloc_ps(num_element))
+    allocate(ps_file(num_element))
+
+
+    if(if_root_global)then
+      rewind(id_inputfile)
+      if_error = .false.
+
+      do
+        read(id_inputfile, '(a)', iostat=istat) char_t
+        if(istat < 0)exit
+        if(trim(adjustl(char_t)) == '%species')then
+          if_found = .true.
+          exit
+        end if
+      end do
+
+      do inum = 1, num_element
+        read(id_inputfile, *)ielem,char_t,illoc
+        ps_file(ielem) = trim(char_t)
+        lloc_ps(ielem) = lloc_ps(ielem)
+        if(ielem>num_element)if_error=.true.
+      end do
+
+    end if
+    call comm_bcast(if_error)
+    if(if_error)call error_finalize("Error: serial number for spieces is wrong.")
+
+  end subroutine read_species
 !-------------------------------------------------------------------------------
   subroutine read_basic_input_character(name, val, val_default, if_default)
     implicit none

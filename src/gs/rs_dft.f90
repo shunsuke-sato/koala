@@ -19,23 +19,23 @@ module rs_dft
   use global_variables
   use parallel
   use communication
-  use read_gs_rt_input
   use simulation_box
   use k_point
   use orbital
-  use atom
+  use input
   implicit none
 
 !  private
 
   public :: gs_rs_dft
+        
 
 contains
 !-------------------------------------------------------------------------------
   subroutine gs_rs_dft
     implicit none
 
-    call read_common_input_for_rtrs_tddft
+    call read_common_input
     call read_species
     call init_simul_box
     call init_k_grid_3d
