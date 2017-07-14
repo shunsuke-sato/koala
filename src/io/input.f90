@@ -31,8 +31,9 @@ module input
             read_vector_input, &
             read_matrix_input, &
             read_common_input, &
-            read_species
-!            read_calc_mode
+            read_species, &
+            fin_input
+
 
   interface read_basic_input
      module procedure read_basic_input_character
@@ -57,9 +58,20 @@ contains
 
     if(if_root_global)then
       open(id_inputfile,file=name_inputfile)
+      open(id_input_log,file=name_input_log)
     end if
 
   end subroutine init_input
+!-------------------------------------------------------------------------------
+  subroutine fin_input
+    implicit none
+
+    if(if_root_global)then
+      close(id_inputfile)
+      close(id_input_log)
+    end if
+
+  end subroutine fin_input
 !-------------------------------------------------------------------------------
   subroutine read_common_input
     implicit none
@@ -68,10 +80,21 @@ contains
 
 ! real-space
     call read_vector_input('%num_rs_grid',nl,val_default=(/-1,-1,-1/))
+    if(if_root_global)write(id_input_log,"(A,3i7)")'%num_rs_grid = ',nl
 
     call read_vector_input('%lattice_parameter',al,val_default=(/1d0,1d0,1d0/))
+    if(if_root_global)write(id_input_log,"(A,3e26.16e3)")'%lattice_parameter = ',al
+
     call read_matrix_input('%lattice_vector_pre',a_pre_cvec, &
          val_default = reshape( (/1d0,0d0,0d0,0d0,1d0,0d0,0d0,0d0,1d0/), (/3,3/)) )
+    if(if_root_global)then
+      write(id_input_log,"(A)")'%lattice_vector_pre'
+      write(id_input_log,"(3e26.16e3)")a_pre_cvec(1,:)
+      write(id_input_log,"(3e26.16e3)")a_pre_cvec(2,:)
+      write(id_input_log,"(3e26.16e3)")a_pre_cvec(3,:)
+      write(id_input_log,"(A)")'/'
+    end if
+
     a_pre_cvec = transpose(a_pre_cvec)
     a_cvec(:,1) = al(1)*a_pre_cvec(:,1)
     a_cvec(:,2) = al(2)*a_pre_cvec(:,2)
@@ -79,16 +102,20 @@ contains
 
 ! reciprocal-lattice spacew
     call read_vector_input('%num_k_grid',nk,val_default=(/-1,-1,-1/))
+    if(if_root_global)write(id_input_log,"(A,3i7)")'%num_k_grid = ',nk
 
 ! material
-    call read_basic_input('num_elec',num_elec,if_default=if_default)
-    if(if_default)call error_finalize('Error: num_elec should be specified in input.')
+    call read_basic_input('num_elec',num_elec,val_default=-1)
+    if(if_root_global)write(id_input_log,"(A,i7)")'num_elec = ',num_elec
 
     call read_basic_input('num_band',num_band,val_default=num_elec)
-
+    if(if_root_global)write(id_input_log,"(A,i7)")'num_band = ',num_band
 
     call read_basic_input('nt',Nt,val_default=0)
+    if(if_root_global)write(id_input_log,"(A,i7)")'nt = ',nt
+
     call read_basic_input('dt',dt,val_default=0.0d0)
+    if(if_root_global)write(id_input_log,"(A,e26.16e3)")'dt = ',dt
 
 
   end subroutine read_common_input
@@ -164,6 +191,15 @@ contains
     end if
     call comm_bcast(if_error)
     if(if_error)call error_finalize("Error: serial number for spieces is wrong.")
+
+    if(if_root_global)then
+      write(id_input_log,"(A)")'%lattice_vector_pre'
+      do ielem = 1, num_element
+         write(id_input_log,"(i7,2x,A,i7)")ielem,trim(ps_file(ielem)),lloc_ps(ielem)
+      end do
+      write(id_input_log,"(A)")'/'
+   end if
+
 
   end subroutine read_species
 !-------------------------------------------------------------------------------

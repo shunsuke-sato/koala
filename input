@@ -13,6 +13,10 @@ dt = 0.08d0
 /
 
 
+%species
+1  "Si.fhi"  1
+/
+
 %lattice_parameter
 10.26  10.26  10.26
 /

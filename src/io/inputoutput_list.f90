@@ -22,6 +22,9 @@ module inputoutput_list
 ! input file
   integer,parameter :: id_inputfile = 21
   character(nlen_filename) :: name_inputfile = './input'
+! input_log file
+  integer,parameter :: id_input_log = 22
+  character(nlen_filename) :: name_input_log = './input_log.out'
 
 !-------------------------------------------------------------------------------
 end module inputoutput_list
