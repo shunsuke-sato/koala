@@ -45,6 +45,7 @@ program main
   write(*,*)"nt",comm_id_global,nt
   write(*,*)"dt",comm_id_global,dt
 
+  call fin_input
   call fin_parallel
 
 end program main
