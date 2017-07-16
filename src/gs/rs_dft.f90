@@ -37,6 +37,7 @@ contains
 
     call read_common_input
     call read_species
+    call read_atomic_coordinates
     call init_simul_box
     call init_k_grid_3d
     call init_orbital

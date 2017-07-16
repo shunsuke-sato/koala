@@ -32,6 +32,7 @@ module input
             read_matrix_input, &
             read_common_input, &
             read_species, &
+            read_atomic_coordinates, &
             fin_input
 
 
@@ -191,17 +192,101 @@ contains
     end if
     call comm_bcast(if_error)
     if(if_error)call error_finalize("Error: serial number for spieces is wrong.")
+    call comm_bcast(ps_file)
+    call comm_bcast(lloc_ps)
 
     if(if_root_global)then
-      write(id_input_log,"(A)")'%lattice_vector_pre'
+      write(id_input_log,"(A)")'%species'
       do ielem = 1, num_element
          write(id_input_log,"(i7,2x,A,i7)")ielem,trim(ps_file(ielem)),lloc_ps(ielem)
       end do
       write(id_input_log,"(A)")'/'
-   end if
+    end if
 
 
   end subroutine read_species
+!-------------------------------------------------------------------------------
+  subroutine read_atomic_coordinates
+    implicit none
+    logical :: if_error, if_found
+    integer :: inum,ielem,istat
+    real(8) :: rvec(3)
+    character(256) :: char_t    
+
+    if(if_root_global)then
+      rewind(id_inputfile)
+      if_found = .false.
+      if_error = .false.
+
+      do
+        read(id_inputfile, '(a)', iostat=istat) char_t
+        if(istat < 0)exit
+        if(trim(adjustl(char_t)) == '%atomic_coor_red')then
+          if_found = .true.
+          exit
+        end if
+      end do
+
+      if(.not.if_found)if_error = .true.
+      
+      if(.not.if_error)then
+         inum = 0
+         do 
+            read(id_inputfile, '(a)', iostat=istat) char_t
+            if(istat < 0)then
+               if_error = .true.
+               exit
+            end if
+            if(trim(adjustl(char_t)) == '/')then
+               exit
+            else
+               inum = inum + 1
+            end if
+         end do
+         num_ion = inum
+
+      end if
+    end if
+
+    call comm_bcast(if_found)
+    if(.not.if_found)call error_finalize("Error: %atomic_coor_red should be specified in input.")
+    call comm_bcast(num_ion)
+    allocate(Rion_cvec(3,num_ion),Rion_rvec(3,num_ion),kion(num_ion))
+
+
+    if(if_root_global)then
+      rewind(id_inputfile)
+
+      do
+        read(id_inputfile, '(a)', iostat=istat) char_t
+        if(istat < 0)exit
+        if(trim(adjustl(char_t)) == '%atomic_coor_red')then
+          if_found = .true.
+          exit
+        end if
+      end do
+
+      do inum = 1, num_ion
+        read(id_inputfile, *)ielem,rvec(:)
+        kion(inum) = ielem
+        rion_rvec(:,inum) = rvec(:)
+      end do
+
+    end if
+
+    call comm_bcast(rion_rvec)
+    call comm_bcast(kion)
+
+    if(if_root_global)then
+      write(id_input_log,"(A)")'%atomic_coor_red'
+      do inum = 1, num_ion
+         write(id_input_log,"(i7,2x,3e26.16e3)")kion(inum),rion_rvec(:,inum)
+      end do
+      write(id_input_log,"(A)")'/'
+    end if
+    
+
+  end subroutine read_atomic_coordinates
 !-------------------------------------------------------------------------------
   subroutine read_basic_input_character(name, val, val_default, if_default)
     implicit none
