@@ -37,14 +37,6 @@ program main
   case default
   end select
 
-  write(*,*)"calc_mode",comm_id_global,trim(calc_mode)
-  write(*,"(A,I5,3e16.6e3)")"a_vec(:,1)",comm_id_global,a_cvec(:,1)
-  write(*,"(A,I5,3e16.6e3)")"a_vec(:,2)",comm_id_global,a_cvec(:,2)
-  write(*,"(A,I5,3e16.6e3)")"a_vec(:,3)",comm_id_global,a_cvec(:,3)
-  write(*,*)"nl",comm_id_global,nl
-  write(*,*)"nt",comm_id_global,nt
-  write(*,*)"dt",comm_id_global,dt
-
   call fin_input
   call fin_parallel
 

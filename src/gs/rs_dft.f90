@@ -23,6 +23,7 @@ module rs_dft
   use k_point
   use orbital
   use input
+  use atom
   implicit none
 
 !  private
@@ -42,6 +43,8 @@ contains
     call init_k_grid_3d
     call init_orbital
     call init_occupation
+    call init_atomic_pseudopotential
+
 
     call init_gs_array
 

@@ -26,5 +26,9 @@ module inputoutput_list
   integer,parameter :: id_input_log = 22
   character(nlen_filename) :: name_input_log = './input_log.out'
 
+
+!! temporal files
+  integer,parameter :: id_ps_file = 101
+
 !-------------------------------------------------------------------------------
 end module inputoutput_list
