@@ -187,7 +187,7 @@ contains
       do inum = 1, num_element
         read(id_inputfile, *)ielem,char_t,illoc
         ps_file(ielem) = trim(char_t)
-        lloc_ps(ielem) = lloc_ps(ielem)
+        lloc_ps(ielem) = illoc
         if(ielem>num_element)if_error=.true.
       end do
 
