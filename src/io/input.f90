@@ -166,6 +166,8 @@ contains
     if(if_error)call error_finalize("Error: %species should be closed by slash (/).")
 
     allocate(lloc_ps(num_element))
+    allocate(lmax_ps(num_element)) ! lmax_ps will be read from input in the future.
+    lmax_ps = -1
     allocate(ps_file(num_element))
 
 
@@ -185,7 +187,7 @@ contains
       do inum = 1, num_element
         read(id_inputfile, *)ielem,char_t,illoc
         ps_file(ielem) = trim(char_t)
-        lloc_ps(ielem) = lloc_ps(ielem)
+        lloc_ps(ielem) = illoc
         if(ielem>num_element)if_error=.true.
       end do
 
@@ -194,6 +196,7 @@ contains
     if(if_error)call error_finalize("Error: serial number for spieces is wrong.")
     call comm_bcast(ps_file)
     call comm_bcast(lloc_ps)
+    call comm_bcast(lmax_ps)
 
     if(if_root_global)then
       write(id_input_log,"(A)")'%species'

@@ -47,7 +47,8 @@ module global_variables
   integer :: num_ion, num_element, num_elec
   integer :: num_band, num_band_td
   integer :: num_orb, num_orb_td
-  integer,allocatable :: Zatom(:),Kion(:)
+  integer,allocatable :: Kion(:)
+  real(8),allocatable :: Zion(:)
   integer,allocatable :: lloc_ps(:),lmax_ps(:)
   character(16),allocatable :: name_species(:)
   character(256),allocatable :: ps_file(:)
@@ -58,6 +59,10 @@ module global_variables
 ! Kohn-Sham
   complex(8),allocatable :: zwfn(:,:,:,:),zwfn_gs(:,:,:,:),zwfn_gs0(:,:,:,:)
   real(8),allocatable :: rho(:,:,:), vloc(:,:,:), vh(:,:,:), vxc(:,:,:)
+
+! Pseudo-potential
+  real(8),allocatable :: ps_proj(:,:)
+  integer,allocatable :: nsign_ps_proj(:), nsize_ps_proj(:), nmap_ps_proj(:,:)
 
 ! GS parameter
   integer :: ncg, nscf
