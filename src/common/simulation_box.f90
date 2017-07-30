@@ -17,6 +17,8 @@
 !-------------------------------------------------------------------------------
 module simulation_box
   use global_variables
+  use parallel
+  use fft
   implicit none
 
   private
@@ -28,6 +30,8 @@ contains
     implicit none
     real(8) :: tvec(3)
     integer :: i,i1,i2,i3
+
+    if(if_root_global)write(*,"(A)")"Started: Initialization of simulation box."
 
     nl_tot = nl(1)*nl(2)*nl(3)
     hl(:) = 1d0/dble(nl(:))
@@ -70,6 +74,10 @@ contains
     lx(1,:)=dble(ilx(1,:))*hl(1)
     lx(2,:)=dble(ilx(2,:))*hl(2)
     lx(3,:)=dble(ilx(3,:))*hl(3)
+
+    call fft3d_initialize(nl(1),nl(2),nl(3))
+
+    if(if_root_global)write(*,"(A)")"Finished: Initialization of simulation box."
 
   end subroutine init_simul_box
 !-------------------------------------------------------------------------------

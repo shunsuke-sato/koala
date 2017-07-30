@@ -5,11 +5,13 @@ project(KOALA Fortran)
 
 
 set(CMAKE_Fortran_COMPILER      "mpif90")
-set(CMAKE_Fortran_FLAGS   "-O0 -lfftw3_mpi -lfftw3 -lm")
-set(PATH_FFTW   /home/sato/lib/fftw/bin/lib)
+set(CMAKE_Fortran_FLAGS   "-O0") # -lfftw3_mpi -lfftw3 -lm")
+set(PATH_FFTW_LIB   /home/sato/lib/fftw/bin/lib)
+set(PATH_FFTW_INC   /home/sato/lib/fftw/bin/include)
 
-include_directories(${PATH_FFTW})
-link_directories(${PATH_FFTW})
+include_directories(${PATH_FFTW_LIB})
+include_directories(${PATH_FFTW_INC})
+link_directories(${PATH_FFTW_LIB})
 
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR})
@@ -36,3 +38,4 @@ list(APPEND KOALA_SOURCES
 )
 
 add_executable(${TARGET_NAME} ${KOALA_SOURCES})
+target_link_libraries(${TARGET_NAME}  fftw3_mpi fftw3)
